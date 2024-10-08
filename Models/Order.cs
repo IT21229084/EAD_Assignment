@@ -22,6 +22,12 @@ namespace ECommerceAPI.Models
         [BsonElement("status")]
         public string? Status { get; set; } = "Processing"; // e.g., Processing, Shipped, Delivered, Cancelled
 
+        [BsonElement("cancellationNote")]
+        public string? CancellationNote { get; set; }
+
+        [BsonElement("CancellationDate")]
+        public DateTime? CancellationDate { get; set; }
+
         [BsonElement("orderDate")]
         public DateTime? OrderDate { get; set; } = DateTime.UtcNow;
 
@@ -48,5 +54,8 @@ namespace ECommerceAPI.Models
 
         [BsonElement("price")]
         public decimal Price { get; set; } = 0M;
+
+        [BsonElement("IsDelivered")]
+        public bool IsDelivered { get; set; } = false;
     }
 }

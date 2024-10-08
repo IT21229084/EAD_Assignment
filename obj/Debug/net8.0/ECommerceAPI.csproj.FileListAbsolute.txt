@@ -52,3 +52,4 @@ D:\Degree program\4th Year\1st Sem\EAD\Assignment\ECommerceAPI\bin\Debug\net8.0\
 D:\Degree program\4th Year\1st Sem\EAD\Assignment\ECommerceAPI\bin\Debug\net8.0\runtimes\osx\native\libmongocrypt.dylib
 D:\Degree program\4th Year\1st Sem\EAD\Assignment\ECommerceAPI\bin\Debug\net8.0\runtimes\win\native\mongocrypt.dll
 D:\Degree program\4th Year\1st Sem\EAD\Assignment\ECommerceAPI\bin\Debug\net8.0\BCrypt.Net.dll
+D:\Degree program\4th Year\1st Sem\EAD\Assignment\ECommerceAPI\obj\Debug\net8.0\ECommerceAPI.sourcelink.json

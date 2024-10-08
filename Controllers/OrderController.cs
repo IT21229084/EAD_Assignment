@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ECommerceAPI.Models;
 using ECommerceAPI.Services;
+using System.Security.Claims;
 
 namespace ECommerceAPI.Controllers
 {
@@ -64,11 +65,24 @@ namespace ECommerceAPI.Controllers
 
         // PATCH: api/order/cancel/{id}
         [HttpPatch("cancel/{id:length(24)}")]
-        public async Task<IActionResult> CancelOrder(string id)
+        //public async Task<IActionResult> CancelOrder(string id)
+        //{
+        //    try
+        //    {
+        //        await _orderService.CancelOrderAsync(id);
+        //        return Ok("Order cancelled successfully.");
+        //    }
+        //    catch (InvalidOperationException ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
+        [HttpPut("{id:length(24)}/cancel")]
+        public async Task<IActionResult> CancelOrder(string id, [FromBody] string cancellationReason)
         {
             try
             {
-                await _orderService.CancelOrderAsync(id);
+                await _orderService.CancelOrderAsync(id, cancellationReason);
                 return Ok("Order cancelled successfully.");
             }
             catch (InvalidOperationException ex)
@@ -76,6 +90,28 @@ namespace ECommerceAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPut("{orderId:length(24)}/deliver")]
+        public async Task<IActionResult> MarkAsDelivered(string orderId, [FromBody] string role)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get user ID from claims
+            try
+            {
+                await _orderService.MarkOrderAsDeliveredAsync(orderId, userId, role);
+                return Ok("Order marked as delivered successfully.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
+            }
+        }
+
+
+
 
         // DELETE: api/order/{id}
         [HttpDelete("{id:length(24)}")]

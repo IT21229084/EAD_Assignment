@@ -48,7 +48,8 @@ namespace ECommerceAPI
             builder.Services.AddSingleton<OrderService>();
             builder.Services.AddSingleton<InventoryService>();
             builder.Services.AddSingleton<VendorService>();
-       
+            builder.Services.AddSingleton<NotificationService>();
+
 
 
 
