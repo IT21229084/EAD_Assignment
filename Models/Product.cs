@@ -37,6 +37,9 @@ namespace ECommerceAPI.Models
         [BsonElement("category")]
         public string? Category { get; set; }
 
+        [BsonElement("ImageUrl")]
+        public string? ImageUrl { get; set; } // URL for the product image
+
         // Whether the product is active and available for customers
         [BsonElement("is_active")]
         public bool IsActive { get; set; } = true;

@@ -45,11 +45,17 @@ namespace ECommerceAPI.Services
                 .Set(p => p.Description, !string.IsNullOrEmpty(updatedProduct.Description) ? updatedProduct.Description : existingProduct.Description)
                 .Set(p => p.Category, !string.IsNullOrEmpty(updatedProduct.Category) ? updatedProduct.Category : existingProduct.Category)
                 .Set(p => p.Price, updatedProduct.Price > 0 ? updatedProduct.Price : existingProduct.Price)
-                .Set(p => p.StockQuantity, updatedProduct.StockQuantity >= 0 ? updatedProduct.StockQuantity : existingProduct.StockQuantity)
+                .Set(p => p.StockQuantity, updatedProduct.StockQuantity > 0 ? updatedProduct.StockQuantity : existingProduct.StockQuantity)
                 .Set(p => p.IsActive, updatedProduct.IsActive);
 
             // Execute the update operation
             await _productCollection.UpdateOneAsync(p => p.Id == id, updateDefinition);
+        }
+
+        public async Task<List<Product>> GetProductsByVendorIdAsync(string vendorId)
+        {
+            var filter = Builders<Product>.Filter.Eq(p => p.VendorId, vendorId);
+            return await _productCollection.Find(filter).ToListAsync();
         }
 
 

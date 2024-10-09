@@ -57,5 +57,8 @@ namespace ECommerceAPI.Models
 
         [BsonElement("IsDelivered")]
         public bool IsDelivered { get; set; } = false;
+
+        [BsonElement("DeliveredDate")]
+        public DateTime? DeliveredDate { get; set; }
     }
 }

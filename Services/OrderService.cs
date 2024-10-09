@@ -42,6 +42,12 @@ namespace ECommerceAPI.Services
 
             await _orderCollection.InsertOneAsync(newOrder);
         }
+
+        // Get all orders for a specific customer by CustomerId
+        public async Task<List<Order>> GetOrdersByCustomerIdAsync(string customerId)
+        {
+            return await _orderCollection.Find(order => order.CustomerId == customerId).ToListAsync();
+        }
         public async Task<bool> HasPendingOrdersForProductAsync(string productId)
         {
             // Build a filter to check for orders that have a status of "Processing"
@@ -56,9 +62,6 @@ namespace ECommerceAPI.Services
             return count > 0;
         }
 
-
-
-        // Update specific fields of an order (Partial Update)
         public async Task UpdateAsync(string id, Order updatedOrder)
         {
             // Retrieve the existing order from the database.
@@ -70,7 +73,7 @@ namespace ECommerceAPI.Services
             }
 
             // Ensure that the order can be updated only if it’s in the "Processing" status.
-            if (order.Status == "Shipped" || order.Status == "Cancelled" || order.Status == "Delivered" || order.IsCancelled ==true)
+            if (order.Status == "Shipped" || order.Status == "Cancelled" || order.Status == "Delivered" || order.IsCancelled == true)
             {
                 throw new InvalidOperationException("Order cannot be updated as it is not in 'Processing' status or is already cancelled.");
             }
@@ -97,6 +100,8 @@ namespace ECommerceAPI.Services
         {
             return orderItems.Sum(item => item.Price * item.Quantity);
         }
+
+
 
 
         // Cancel an order
@@ -126,7 +131,77 @@ namespace ECommerceAPI.Services
                 $"Your order {id} has been cancelled. Note: {note}");
         }
 
-        public async Task MarkOrderAsDeliveredAsync(string orderId, string userId, string role)
+        //public async Task MarkOrderAsDeliveredAsync(string orderId, string userId, string role)
+        //{
+        //    // Retrieve the order from the database.
+        //    var order = await GetAsync(orderId);
+        //    if (order == null)
+        //    {
+        //        throw new InvalidOperationException("Order not found.");
+        //    }
+
+        //    // Update delivery status based on the user's role.
+        //    //if (role == "CSR" || role == "Admin")
+        //    //{
+        //    //    // CSR or Admin can mark the entire order as delivered.
+        //    //    order.Status = "Delivered";
+        //    //    order.DeliveryDate = DateTime.UtcNow; // Record the delivery date.
+        //    //}
+        //    //else if (role == "Vendor")
+        //    //{
+        //        // Vendor can mark their item as delivered.
+        //        // Check if the vendor's item is in the order
+        //        var itemDelivered = false;
+        //        foreach (var item in order.OrderItems)
+        //        {
+        //            if (item.VendorId == userId)
+        //            {
+        //                itemDelivered = true; // Indicate that this vendor's item was marked as delivered
+        //                                      // If this vendor's item is the last item, mark the order as delivered.
+        //                if (order.OrderItems.All(i => i.VendorId != userId || (i.VendorId == userId && item.IsDelivered)))
+        //                {
+        //                    order.Status = "Delivered";
+        //                    order.DeliveryDate = DateTime.UtcNow; // Set delivery date if all items from the vendor are delivered.
+        //                }
+        //                else
+        //                {
+        //                    order.Status = "Partially Delivered"; // Some items are delivered, but not all.
+        //                }
+        //            }
+        //        }
+
+        //        if (!itemDelivered)
+        //        {
+        //            throw new InvalidOperationException("This vendor has no items in the order.");
+        //        }
+        //    //}
+        //    //else
+        //    //{
+        //    //    throw new UnauthorizedAccessException("You do not have permission to update this order.");
+        //    //}
+
+        //    // Update the last modified date.
+
+
+        //    // Save the updated order back to the database.
+        //    await _orderCollection.ReplaceOneAsync(o => o.Id == orderId, order);
+
+        //    // Prepare the notification message based on the updated order status.
+        //    var notificationMessage = order.Status == "Delivered"
+        //        ? $"Your order {orderId} has been fully delivered."
+        //        : $"Part of your order {orderId} has been delivered by one of the vendors.";
+
+        //    // Notify the customer about the delivery status.
+        //    await _notificationService.SendNotificationAsync(order.CustomerId, notificationMessage);
+        //}
+
+
+
+
+        // Remove order
+
+
+        public async Task MarkOrderAsDeliveredAsync(string orderId, string userId)
         {
             // Retrieve the order from the database.
             var order = await GetAsync(orderId);
@@ -135,65 +210,31 @@ namespace ECommerceAPI.Services
                 throw new InvalidOperationException("Order not found.");
             }
 
-            // Update delivery status based on the user's role.
-            if (role == "CSR" || role == "Admin")
+            // Mark all items in the order as delivered.
+            foreach (var item in order.OrderItems)
             {
-                // CSR or Admin can mark the entire order as delivered.
-                order.Status = "Delivered";
-                order.DeliveryDate = DateTime.UtcNow; // Record the delivery date.
-            }
-            else if (role == "Vendor")
-            {
-                // Vendor can mark their item as delivered.
-                // Check if the vendor's item is in the order
-                var itemDelivered = false;
-                foreach (var item in order.OrderItems)
-                {
-                    if (item.VendorId == userId)
-                    {
-                        itemDelivered = true; // Indicate that this vendor's item was marked as delivered
-                                              // If this vendor's item is the last item, mark the order as delivered.
-                        if (order.OrderItems.All(i => i.VendorId != userId || (i.VendorId == userId && item.IsDelivered)))
-                        {
-                            order.Status = "Delivered";
-                            order.DeliveryDate = DateTime.UtcNow; // Set delivery date if all items from the vendor are delivered.
-                        }
-                        else
-                        {
-                            order.Status = "Partially Delivered"; // Some items are delivered, but not all.
-                        }
-                    }
-                }
-
-                if (!itemDelivered)
-                {
-                    throw new InvalidOperationException("This vendor has no items in the order.");
-                }
-            }
-            else
-            {
-                throw new UnauthorizedAccessException("You do not have permission to update this order.");
+                // Assuming you want to set IsDelivered to true for each item.
+                item.IsDelivered = true;
+                item.DeliveredDate = DateTime.UtcNow;
             }
 
-            // Update the last modified date.
-          
+            // Update the order status and delivery date.
+            order.Status = "Delivered";
+            order.DeliveryDate = DateTime.UtcNow; // Record the delivery date.
+
+            // Update the last modified date (if needed).
+           
 
             // Save the updated order back to the database.
             await _orderCollection.ReplaceOneAsync(o => o.Id == orderId, order);
 
             // Prepare the notification message based on the updated order status.
-            var notificationMessage = order.Status == "Delivered"
-                ? $"Your order {orderId} has been fully delivered."
-                : $"Part of your order {orderId} has been delivered by one of the vendors.";
+            var notificationMessage = $"Your order {orderId} has been fully delivered.";
 
             // Notify the customer about the delivery status.
             await _notificationService.SendNotificationAsync(order.CustomerId, notificationMessage);
         }
 
-
-
-
-        // Remove order
         public async Task RemoveAsync(string id) =>
             await _orderCollection.DeleteOneAsync(x => x.Id == id);
     }

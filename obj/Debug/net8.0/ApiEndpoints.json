@@ -449,30 +449,20 @@
         "Name": "orderId",
         "Type": "System.String",
         "IsRequired": true
-      },
-      {
-        "Name": "role",
-        "Type": "System.String",
-        "IsRequired": true
       }
     ],
     "ReturnTypes": []
   },
   {
     "ContainingType": "ECommerceAPI.Controllers.OrderController",
-    "Method": "CancelOrder",
-    "RelativePath": "api/order/cancel/{id}",
-    "HttpMethod": "PATCH",
+    "Method": "GetOrdersByCustomerId",
+    "RelativePath": "api/order/customer/{customerId}",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "cancellationReason",
+        "Name": "customerId",
         "Type": "System.String",
         "IsRequired": true
       }
@@ -662,6 +652,32 @@
       {
         "Name": "threshold",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[ECommerceAPI.Models.Product, ECommerceAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ECommerceAPI.Controllers.ProductController",
+    "Method": "GetProductsByVendorId",
+    "RelativePath": "api/product/vendor/{vendorId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "vendorId",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],

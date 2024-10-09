@@ -47,6 +47,19 @@ namespace ECommerceAPI.Controllers
             return CreatedAtAction(nameof(Get), new { id = newOrder.Id }, newOrder);
         }
 
+        [HttpGet("customer/{customerId}")]
+        public async Task<IActionResult> GetOrdersByCustomerId(string customerId)
+        {
+            var orders = await _orderService.GetOrdersByCustomerIdAsync(customerId);
+
+            if (orders == null || !orders.Any())
+            {
+                return NotFound($"No orders found for customer ID {customerId}.");
+            }
+
+            return Ok(orders);
+        }
+
 
         // PUT: api/order/{id}
         [HttpPut("{id:length(24)}")]
@@ -63,20 +76,6 @@ namespace ECommerceAPI.Controllers
             }
         }
 
-        // PATCH: api/order/cancel/{id}
-        [HttpPatch("cancel/{id:length(24)}")]
-        //public async Task<IActionResult> CancelOrder(string id)
-        //{
-        //    try
-        //    {
-        //        await _orderService.CancelOrderAsync(id);
-        //        return Ok("Order cancelled successfully.");
-        //    }
-        //    catch (InvalidOperationException ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
         [HttpPut("{id:length(24)}/cancel")]
         public async Task<IActionResult> CancelOrder(string id, [FromBody] string cancellationReason)
         {
@@ -91,13 +90,14 @@ namespace ECommerceAPI.Controllers
             }
         }
 
-        [HttpPut("{orderId:length(24)}/deliver")]
-        public async Task<IActionResult> MarkAsDelivered(string orderId, [FromBody] string role)
+      
+        [HttpPut("{orderId}/deliver")]
+        public async Task<IActionResult> MarkAsDelivered(string orderId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get user ID from claims
             try
             {
-                await _orderService.MarkOrderAsDeliveredAsync(orderId, userId, role);
+                await _orderService.MarkOrderAsDeliveredAsync(orderId, userId);
                 return Ok("Order marked as delivered successfully.");
             }
             catch (InvalidOperationException ex)
@@ -109,9 +109,6 @@ namespace ECommerceAPI.Controllers
                 return Forbid(ex.Message);
             }
         }
-
-
-
 
         // DELETE: api/order/{id}
         [HttpDelete("{id:length(24)}")]

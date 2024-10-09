@@ -32,6 +32,23 @@ namespace ECommerceAPI.Controllers
 
             return product;
         }
+        [HttpGet("vendor/{vendorId}")]
+        public async Task<ActionResult<List<Product>>> GetProductsByVendorId(string vendorId)
+        {
+            if (string.IsNullOrEmpty(vendorId))
+            {
+                return BadRequest("Vendor ID is required.");
+            }
+
+            var products = await _productService.GetProductsByVendorIdAsync(vendorId);
+
+            if (products == null || products.Count == 0)
+            {
+                return NotFound("No products found for the given vendor ID.");
+            }
+
+            return Ok(products);
+        }
 
         // POST api/product
         [HttpPost]
