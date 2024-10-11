@@ -81,9 +81,9 @@ namespace ECommerceAPI.Controllers
 
         // POST: api/user/authenticate
         [HttpPost("authenticate")]
-        public async Task<ActionResult<User>> Authenticate(string username, string password)
+        public async Task<ActionResult<User>> Authenticate(string Email, string password)
         {
-            var user = await _userService.AuthenticateAsync(username, password);
+            var user = await _userService.AuthenticateAsync(Email, password);
             if (user == null)
             {
                 return Unauthorized("Invalid credentials.");

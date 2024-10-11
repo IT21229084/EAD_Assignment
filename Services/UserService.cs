@@ -31,7 +31,14 @@ namespace ECommerceAPI.Services
         // Get a single user by Username
         public async Task<User?> GetByUsernameAsync(string username) =>
             await _userCollection.Find(x => x.Username.ToLower() == username.ToLower()).FirstOrDefaultAsync();
+        public async Task<User?> GetByeEmailAsync(string Email) =>
+           await _userCollection.Find(x => x.Email.ToLower() == Email.ToLower()).FirstOrDefaultAsync();
 
+
+        public static bool VerifyPassword(string password, string hashedPassword)
+        {
+            return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
+        }
         // Create a new user
         public async Task CreateAsync(User newUser)
         {
@@ -66,9 +73,9 @@ namespace ECommerceAPI.Services
             await _userCollection.DeleteOneAsync(x => x.Id == id);
 
         // Authenticate user by username and password
-        public async Task<User?> AuthenticateAsync(string username, string password)
+        public async Task<User?> AuthenticateAsync(string Email, string password)
         {
-            var user = await GetByUsernameAsync(username);
+            var user = await GetByeEmailAsync(Email);
             if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
             {
                 return null;
