@@ -30,7 +30,7 @@ namespace ECommerceAPI.Models
         public string Role { get; set; } = "Customer";  // Roles: Admin, Customer, Vendor, etc.
 
         [BsonElement("isActive")]
-        public bool IsActive { get; set; } = true;
+        public bool IsActive { get; set; } = false;
 
         // Vendor-specific fields
         [BsonElement("vendorProfile")]

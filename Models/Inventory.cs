@@ -20,7 +20,7 @@ namespace ECommerceAPI.Models
         public int StockQuantity { get; set; } = 0;
 
         [BsonElement("isLowStockAlertEnabled")]
-        public bool IsLowStockAlertEnabled { get; set; } = true;
+        public bool IsLowStockAlertEnabled { get; set; } = false;
 
         [BsonElement("lowStockThreshold")]
         public int LowStockThreshold { get; set; } = 10;

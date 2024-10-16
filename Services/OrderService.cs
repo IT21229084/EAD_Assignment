@@ -81,7 +81,7 @@ namespace ECommerceAPI.Services
             // Update only the fields that are provided in the updatedOrder.
             order.OrderItems = updatedOrder.OrderItems ?? order.OrderItems;
             order.OrderDate = updatedOrder.OrderDate ?? order.OrderDate;
-            order.DeliveryDate = updatedOrder.DeliveryDate ?? order.DeliveryDate;
+            //order.DeliveryDate = updatedOrder.DeliveryDate ?? order.DeliveryDate;
             order.CustomerId = !string.IsNullOrEmpty(updatedOrder.CustomerId) ? updatedOrder.CustomerId : order.CustomerId;
             order.Status = !string.IsNullOrEmpty(updatedOrder.Status) ? updatedOrder.Status : order.Status;
 
